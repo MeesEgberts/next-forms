@@ -1,0 +1,26 @@
+{
+  "name": "next-forms",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src --format cjs,esm --dts",
+    "dev": "tsup src --format cjs,esm --dts --watch"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "peerDependencies": {
+    "next": "^15",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tsup": "^8.4.0",
+    "typescript": "latest"
+  }
+}
