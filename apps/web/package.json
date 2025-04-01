@@ -11,7 +11,6 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@repo/ui": "workspace:*",
     "next": "^15.2.1",
     "next-forms": "workspace:*",
     "react": "^19.0.0",
