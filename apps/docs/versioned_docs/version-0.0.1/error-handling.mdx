@@ -1,0 +1,89 @@
+---
+sidebar_position: 3
+---
+
+# Error Handling
+`next-forms` makes it easy to handle both **field-level** and **form-level** errors with full support for Zod validation responses and custom server-side messages.
+
+## Field Errors
+When a form is submitted, all fields are automatically validated against your Zod schema on the server. If validation fails, `next-forms` will return a structured `errors` object containing the error messages per field.
+You can access these errors via the `state` returned from `useActionState`.
+
+```tsx title="app/_components/sign-in.form.tsx"
+"use client";
+
+import Form from "next/form";
+import { useActionState } from "react";
+import { signIn } from "../_lib/actions/sign-in";
+
+export function SignInForm() {
+  const [state, action, pending] = useActionState(signIn, {
+    ok: false,
+  });
+
+  return (
+    <Form action={action}>
+      <label htmlFor="email">Email</label>
+      <input type="email" id="email" name="email" required />
+      // highlight-next-line
+      {state.errors?.email?.map((error) => <p key={error}>{error}</p>)}
+
+      <br />
+
+      <label htmlFor="password">Password</label>
+      <input type="password" id="password" name="password" required />
+      // highlight-next-line
+      {state.errors?.password?.map((error) => <p key={error}>{error}</p>)}
+
+      <hr />
+
+      <button type="submit" disabled={pending}>
+        {pending ? "Submitting..." : "Submit"}
+      </button>
+    </Form>
+  );
+}
+```
+
+## Form Errors
+Sometimes validation isn’t tied to a specific field. For example: "Invalid credentials" or "Something went wrong".
+You can return a response from the server action for generic form-level errors:
+
+```tsx title="app/_components/sign-in.form.tsx"
+"use client";
+
+import Form from "next/form";
+import { useActionState } from "react";
+import { signIn } from "../_lib/actions/sign-in";
+
+export function SignInForm() {
+  const [state, action, pending] = useActionState(signIn, {
+    ok: false,
+  });
+
+  return (
+    <Form action={action}>
+      // highlight-next-line
+      {!state.ok && state.response && <p>{state.response}</p>}
+
+      <label htmlFor="email">Email</label>
+      <input type="email" id="email" name="email" required />
+
+      <br />
+
+      <label htmlFor="password">Password</label>
+      <input type="password" id="password" name="password" required />
+
+      <hr />
+
+      <button type="submit" disabled={pending}>
+        {pending ? "Submitting..." : "Submit"}
+      </button>
+    </Form>
+  );
+}
+```
+
+:::tip
+You can also check the authentication state directly within the middleware. If the user isn't authenticated, you can return an error that will appear as a generic error message on the form. For more details, see the [middleware](./middleware.mdx) guide
+:::

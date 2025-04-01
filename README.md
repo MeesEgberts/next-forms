@@ -1,84 +1,87 @@
-# Turborepo starter
+# next-forms 📝
 
-This Turborepo starter is maintained by the Turborepo core team.
+**Simple, declarative form handling for Next.js Server Actions**
 
-## Using this example
+`next-forms` is a lightweight utility designed to make working with [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions) easier and more enjoyable. It provides a clean API for managing form submissions, validation, middleware, and error handling — all with minimal boilerplate.
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
+## ✨ Features
+
+- ✅ **Server Action Integration** – Built specifically for Server Actions in Next.js
+- ⚠️ **Field & Form-Level Errors** – Handle validation like a pro
+- 🔄 **Loading State Management** – Easily show loading indicators during submission
+- 🔐 **Middleware Support** – Add authentication, authorization, or custom checks per action
+- 🔁 **DRY-Friendly** – Avoid repeating boilerplate in your server logic
+
+---
+
+## 🚀 Getting Started
+
+Install the package:
+
+```bash
+npm install next-forms
+# or
+yarn add next-forms
 ```
 
-## What's inside?
+Create a form handler:
 
-This Turborepo includes the following packages/apps:
+```tsx
+// app/_lib/utils/server-actions.ts
+import { createClient } from 'next-forms';
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+export const createServerAction = createClient({
+   // Optional: add middleware here (e.g. auth, logging, etc.)
+});
 ```
 
-### Develop
+Use it in a server action:
 
-To develop all apps and packages, run the following command:
+```tsx
+// app/_lib/actions/sign-in.ts
+"use server";
 
-```
-cd my-turborepo
-pnpm dev
-```
+import { createServerAction } from "../utils/server-actions";
+import { z } from "zod";
 
-### Remote Caching
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+export const signIn = createServerAction(schema, async (values) => {
+  // Your login logic here
+  return { ok: true };
+});
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+---
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## 🧪 Example App
 
-```
-npx turbo link
-```
+A demo app is coming soon. Stay tuned!
 
-## Useful Links
+---
 
-Learn more about the power of Turborepo:
+## 💡 Inspiration
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+Built out of real-world pain points when working with Next.js forms, server actions, and session handling. `next-forms` aims to reduce boilerplate and make developer experience delightful again.
+
+---
+
+## 📦 License
+
+MIT © [Mees Egberts](https://github.com/MeesEgberts)
+
+---
+
+## 🙌 Contributing
+
+PRs, issues, and suggestions are always welcome! If you’ve got ideas to improve the developer experience, feel free to open a discussion or start coding.
+
+
+---
+
+Let me know if you’d like to include badges (e.g., NPM, build status), a changelog section, or instructions for local development!

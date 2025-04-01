@@ -11,8 +11,6 @@ const schema = z.object({
 export const signIn = createServerAction<typeof schema>(
   schema,
   async (values) => {
-    // your custom logic here
-
     return { ok: true };
   },
 );

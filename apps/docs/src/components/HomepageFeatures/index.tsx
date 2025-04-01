@@ -16,7 +16,7 @@ const FeatureList: FeatureItem[] = [
     description: (
       <>
         Built entirely on top of Next.js native <code>&lt;Form&gt;</code> and
-        server action APIs. No custom handlers, no magic — just the platform as
+        React APIs. No custom handlers, no magic — just the platform as
         intended.
       </>
     ),
