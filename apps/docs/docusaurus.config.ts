@@ -7,7 +7,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 const config: Config = {
   title: "next-forms",
   tagline:
-    "The proper way to handle forms in Next.js using native APIs and full Zod schema validation.",
+    "A fully native and type-safe way to handle forms in Next.js using Zod schema validation.",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
