@@ -1,7 +1,7 @@
 "use client";
 
 import Form from "next/form";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import { signIn } from "../_lib/actions/example";
 
 export function ExampleForm() {
@@ -9,20 +9,24 @@ export function ExampleForm() {
     ok: false,
   });
 
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
-
   return (
-    <Form action={action}>
+    <Form action={action} noValidate>
       <label htmlFor="email">Email</label>
-      <input type="email" id="email" name="email" required />
-
+      <input type="email" id="email" name="email" />
+      {state.errors?.email?.map((error) => (
+        <p key={error} style={{ color: "red" }}>
+          {error}
+        </p>
+      ))}
       <br />
 
       <label htmlFor="password">Password</label>
-      <input type="password" id="password" name="password" required />
-
+      <input type="password" id="password" name="password" />
+      {state.errors?.password?.map((error) => (
+        <p key={error} style={{ color: "red" }}>
+          {error}
+        </p>
+      ))}
       <hr />
 
       <button type="submit" disabled={pending}>

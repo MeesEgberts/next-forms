@@ -11,9 +11,7 @@ const schema = z.object({
 export const signIn = createServerAction<typeof schema>(
   schema,
   async (values) => {
-    console.log(values);
-
-    return { ok: true };
+    return { ok: true, values };
   },
   { clear: false },
 );

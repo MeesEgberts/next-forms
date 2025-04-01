@@ -8,7 +8,10 @@ import {
 export function createClient({ middleware }: CreateClientOptions) {
   return function createServerAction<S extends ZodSchema>(
     schema: S,
-    handler: (values: z.infer<S>) => Promise<Response<S>>,
+    handler: (
+      values: z.infer<S>,
+      options?: CreateServerActionOptions,
+    ) => Promise<Response<S>>,
     options?: CreateServerActionOptions,
   ) {
     return async function serverAction(
@@ -28,8 +31,8 @@ export function createClient({ middleware }: CreateClientOptions) {
       }
 
       // map the form data to object
-
-      const parsed = schema.safeParse(data);
+      const obj = Object.fromEntries(data);
+      const parsed = schema.safeParse(obj);
 
       if (!parsed.success) {
         return {
@@ -39,7 +42,7 @@ export function createClient({ middleware }: CreateClientOptions) {
         };
       }
 
-      return handler(parsed.data);
+      return handler(parsed.data, options);
     };
   };
 }

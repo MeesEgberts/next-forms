@@ -4,7 +4,7 @@ import { z, ZodSchema } from "zod";
 export type Response<S extends ZodSchema> = {
   ok: boolean;
   response?: string;
-  errors?: { [K in keyof S]?: string[] };
+  errors?: { [K in keyof z.infer<S>]?: string[] };
   values?: Partial<z.infer<S>>;
 };
 
