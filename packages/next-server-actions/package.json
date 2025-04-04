@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "private": false,
   "description": "Type-safe form handling for Next.js — effortless server action validation with Zod, built-in middleware, and great developer ergonomics.",
-  "homepage": "https://next-forms-docs.vercel.app",
+  "homepage": "https://next-server-actions-docs.vercel.app",
   "repository": {
     "url": "https://github.com/MeesEgberts/next-server-actions"
   },

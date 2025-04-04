@@ -1,31 +1,26 @@
 import { z, ZodSchema } from "zod";
-import {
-  CreateClientOptions,
-  CreateServerActionOptions,
-  Response,
-} from "./lib/types.js";
+import { CreateClientOptions, Response } from "./lib/types.js";
 
-export function createClient({ middleware }: CreateClientOptions) {
-  return function createServerAction<S extends ZodSchema>(
+export function createClient<C extends object = {}>({
+  middleware,
+  context,
+  onError,
+}: CreateClientOptions<C>) {
+  return function createServerAction<S extends ZodSchema, R = undefined>(
     schema: S,
-    handler: (
-      values: z.infer<S>,
-      options?: CreateServerActionOptions,
-    ) => Promise<Response<S>>,
-    options?: CreateServerActionOptions,
+    handler: (values: z.infer<S>, context: C) => Promise<Response<S, R>>,
   ) {
     return async function serverAction(
-      prev: Response<S>,
+      prev: Response<S, R>,
       data: FormData,
-    ): Promise<Response<S>> {
+    ): Promise<Response<S, R>> {
       if (middleware) {
-        const middlewareResponse = middleware();
+        const m = await middleware();
 
-        if (middlewareResponse) {
+        if (m) {
           return {
             ok: false,
-            response: middlewareResponse.message,
-            values: options?.clear ? {} : prev.values,
+            message: m.message,
           };
         }
       }
@@ -38,11 +33,26 @@ export function createClient({ middleware }: CreateClientOptions) {
         return {
           ok: false,
           errors: parsed.error.flatten().fieldErrors,
-          values: options?.clear ? {} : prev.values,
         };
       }
 
-      return handler(parsed.data, options);
+      if (context) {
+        const c = await context();
+
+        if (c) {
+          return handler(parsed.data, c).catch((e) => {
+            if (onError) onError(e);
+
+            return { ok: false };
+          });
+        }
+      }
+
+      return handler(parsed.data, {} as C).catch((e) => {
+        if (onError) onError(e);
+
+        return { ok: false };
+      });
     };
   };
 }

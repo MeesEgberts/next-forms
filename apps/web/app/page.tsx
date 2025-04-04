@@ -1,5 +1,5 @@
-import { ExampleForm } from "./_components/form";
+import { SignInForm } from "./_components/form";
 
 export default function Home() {
-  return <ExampleForm />;
+  return <SignInForm />;
 }
