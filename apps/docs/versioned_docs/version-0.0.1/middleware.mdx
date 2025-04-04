@@ -4,10 +4,10 @@ sidebar_position: 4
 
 # Middleware
 
-The `middleware` option in `next-forms` allows you to intercept and validate incoming server actions before they're processed. This is especially useful for enforcing authentication, authorization, or other request-level logic.
+The `middleware` option in `next-server-actions` allows you to intercept and validate incoming server actions before they're processed. This is especially useful for enforcing authentication, authorization, or other request-level logic.
 
 ```tsx title="app/_lib/utils/server-actions.ts"
-import { createClient } from "next-forms";
+import { createClient } from "next-server-actions";
 
 export const createProtectedServerAction = createClient({
   // highlight-start

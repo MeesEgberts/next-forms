@@ -3,10 +3,10 @@ sidebar_position: 3
 ---
 
 # Error Handling
-`next-forms` makes it easy to handle both **field-level** and **form-level** errors with full support for Zod validation responses and custom server-side messages.
+`next-server-actions` makes it easy to handle both **field-level** and **form-level** errors with full support for Zod validation responses and custom server-side messages.
 
 ## Field Errors
-When a form is submitted, all fields are automatically validated against your Zod schema on the server. If validation fails, `next-forms` will return a structured `errors` object containing the error messages per field.
+When a form is submitted, all fields are automatically validated against your Zod schema on the server. If validation fails, `next-server-actions` will return a structured `errors` object containing the error messages per field.
 You can access these errors via the `state` returned from `useActionState`.
 
 ```tsx title="app/_components/sign-in.form.tsx"

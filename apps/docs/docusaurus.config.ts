@@ -5,7 +5,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "next-forms",
+  title: "next-server-actions",
   tagline:
     "A fully native and type-safe way to handle forms in Next.js using Zod schema validation.",
   favicon: "img/favicon.ico",
@@ -36,7 +36,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            "https://github.com/MeesEgberts/next-forms/tree/main/apps/docs/",
+            "https://github.com/MeesEgberts/next-server-actions/tree/main/apps/docs/",
         },
         blog: {
           showReadingTime: true,
@@ -47,7 +47,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            "https://github.com/MeesEgberts/next-forms/tree/main/apps/docs/",
+            "https://github.com/MeesEgberts/next-server-actions/tree/main/apps/docs/",
           // Useful options to enforce blogging best practices
           onInlineTags: "warn",
           onInlineAuthors: "warn",
@@ -64,9 +64,9 @@ const config: Config = {
     // Replace with your project's social card
     image: "img/docusaurus-social-card.jpg",
     navbar: {
-      title: "next-forms",
+      title: "next-server-actions",
       logo: {
-        alt: "next-forms",
+        alt: "next-server-actions",
         src: "img/logo.png",
       },
       items: [
@@ -82,7 +82,7 @@ const config: Config = {
           position: "right",
         },
         {
-          href: "https://github.com/MeesEgberts/next-forms",
+          href: "https://github.com/MeesEgberts/next-server-actions",
           label: "GitHub",
           position: "right",
         },
@@ -118,12 +118,12 @@ const config: Config = {
             },
             {
               label: "GitHub",
-              href: "https://github.com/MeesEgberts/next-forms",
+              href: "https://github.com/MeesEgberts/next-server-actions",
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} next-forms. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} next-server-actions. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

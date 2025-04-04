@@ -1,8 +1,8 @@
-# next-forms 📝
+# next-server-actions 📝
 
 **Simple, declarative form handling for Next.js Server Actions**
 
-`next-forms` is a lightweight utility designed to make working with [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions) easier and more enjoyable. It provides a clean API for managing form submissions, validation, middleware, and error handling — all with minimal boilerplate.
+`next-server-actions` is a lightweight utility designed to make working with [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions) easier and more enjoyable. It provides a clean API for managing form submissions, validation, middleware, and error handling — all with minimal boilerplate.
 
 ---
 
@@ -21,16 +21,16 @@
 Install the package:
 
 ```bash
-npm install next-forms
+npm install next-server-actions
 # or
-yarn add next-forms
+yarn add next-server-actions
 ```
 
 Create a form handler:
 
 ```tsx
 // app/_lib/utils/server-actions.ts
-import { createClient } from 'next-forms';
+import { createClient } from 'next-server-actions';
 
 export const createServerAction = createClient({
    // Optional: add middleware here (e.g. auth, logging, etc.)
@@ -67,7 +67,7 @@ A demo app is coming soon. Stay tuned!
 
 ## 💡 Inspiration
 
-Built out of real-world pain points when working with Next.js forms, server actions, and session handling. `next-forms` aims to reduce boilerplate and make developer experience delightful again.
+Built out of real-world pain points when working with Next.js forms, server actions, and session handling. `next-server-actions` aims to reduce boilerplate and make developer experience delightful again.
 
 ---
 
