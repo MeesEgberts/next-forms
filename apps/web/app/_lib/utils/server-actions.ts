@@ -1,4 +1,4 @@
-import { createClient } from "next-forms";
+import { createClient } from "next-server-actions";
 
 export const createServerAction = createClient({
   middleware: () => {
