@@ -10,9 +10,8 @@ const schema = z.object({
 
 export const signIn = createServerAction<typeof schema>(
   schema,
-  async (values, context) => {
-    throw new Error("Not implemented");
-
-    return { ok: true };
+  async (values) => {
+    // return a message that can display in the UI
+    return { ok: false, message: "error message" };
   },
 );

@@ -11,11 +11,10 @@ export function SignInForm() {
 
   return (
     <Form action={action}>
-      {!state.ok && state.response && <p>{state.response}</p>}
+      {!state.ok && state.message && <p>{state.message}</p>}
 
       <label htmlFor="email">Email</label>
       <input type="email" id="email" name="email" />
-      {state.errors?.email?.map((error) => <p key={error}>{error}</p>)}
 
       <br />
 

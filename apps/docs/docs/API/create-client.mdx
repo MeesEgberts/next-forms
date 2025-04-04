@@ -3,3 +3,125 @@ sidebar_position: 1
 ---
 
 # `createClient`
+
+The `createClient` function is the core utility in `next-server-actions`. It allows you to define shared logic—such as middleware, context, and error handling—that will automatically be applied to all your server actions.
+
+This centralizes logic like authentication, context injection, and error reporting, helping you build cleaner and more maintainable apps.
+
+---
+
+## Usage
+
+```tsx
+import { createClient } from "next-server-actions";
+
+export const createServerAction = createClient({
+  middleware: async () => {
+    // Optional: auth, permissions, etc.
+  },
+  context: async () => {
+    // Optional: shared user/session info
+  },
+  onError: async (error) => {
+    // Optional: global error logging
+  },
+});
+```
+
+You can then use this `createServerAction` function to define individual server actions.
+
+:::info
+Want to know more about how to define server actions? See [`createServerAction`](/API/create-server-action.mdx).
+:::
+
+## Options
+### `middleware`
+
+```ts
+middleware?: () => Promise<{ message: string; }> | void
+```
+
+Runs before your server action logic. If it returns an object with a `message`, the action will be short-circuited and that message will be returned.
+
+Useful for things like:
+
+- Authentication
+- Permission checks
+
+#### Example
+
+```ts
+export const createServerAction = createClient({
+  // highlight-start
+  middleware: async () => {
+    const user = await getUser();
+
+    if (!user) {
+      return { message: "unauthorized" };
+    }
+  }
+  // highlight-end
+});
+```
+
+---
+
+### `context`
+
+```ts
+context?: () => Promise<C>
+```
+
+Injects shared data into all server actions. The returned object is passed as the **second argument** to your action handler.
+
+Perfect for:
+
+- Current user
+- Feature flags
+- Environment config
+
+#### Example
+
+```ts
+export const createServerAction = createClient({
+  // highlight-start
+  context: async () => {
+    const user = await getUser();
+
+    return { user };
+  }
+  // highlight-end
+});
+```
+
+---
+
+### `onError`
+
+```ts
+onError?: (error: unknown) => Promise<void>
+```
+
+A global error handler. It’s called whenever a server action throws.
+
+Use cases:
+
+- Send errors to external services (e.g. Sentry)
+- Log to the console in dev
+- Alerting / audit trails
+
+#### Example
+
+```ts
+export const createServerAction = createClient({
+  // highlight-start
+  onError: async (error) => {
+    Sentry.captureException(error);
+  }
+  // highlight-end
+});
+```
+
+---
+
+That’s it! Once your client is set up with `createClient`, you can start defining your actions with shared logic applied automatically.

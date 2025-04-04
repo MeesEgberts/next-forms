@@ -11,7 +11,7 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: "Uses Next.js Native APIs",
+    title: "Uses Native APIs",
     Svg: require("@site/static/img/nextjs.svg").default,
     description: (
       <>
