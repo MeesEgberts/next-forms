@@ -1,7 +1,7 @@
 {
   "name": "next-server-actions",
   "type": "module",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "private": false,
   "description": "Type-safe server action handling for Next.js — effortless server action validation with Zod, built-in middleware, and great developer ergonomics.",
   "homepage": "https://next-server-actions-docs.vercel.app",
