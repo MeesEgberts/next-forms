@@ -1,0 +1,61 @@
+---
+sidebar_position: 4
+---
+
+# Context
+
+The `context` feature allows you to inject shared data into all your server actions.
+
+For example, instead of calling `getUser()` in every individual action, you can call it once in the `context` function. The returned object will be automatically passed as the **second argument** to all server actions.
+
+This helps reduce duplication and keeps your action logic clean and focused.
+
+---
+
+## Defining Context
+
+You can define a shared context using the `context` option when creating your server action client. The `context` function must return an object, which can contain any data your server actions might need.
+
+```tsx title="app/_lib/utils/server-actions.ts"
+import { createClient } from "next-server-actions";
+import { getUser } from "../../_data/get-user";
+
+export const createServerAction = createClient({
+  // highlight-start
+  context: async () => {
+    const user = await getUser();
+
+    return { user };
+  }
+  // highlight-end
+});
+```
+
+---
+
+## Accessing Context in Actions
+
+The context object you return becomes the **second argument** in all server action handlers.
+
+```tsx title="app/_lib/actions/sign-in.ts"
+"use server";
+
+import { createServerAction } from "../utils/server-actions";
+import { z } from "zod";
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export const signIn = createServerAction<typeof schema>(
+  schema,
+  // highlight-next-line
+  async (values, { user }) => {
+    // Your login logic using the context-provided user
+    return { ok: true };
+  },
+);
+```
+
+With this setup, you only need to define logic like `getUser()` once, making your actions more reusable and maintainable.

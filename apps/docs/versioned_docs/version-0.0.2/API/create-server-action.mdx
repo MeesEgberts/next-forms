@@ -1,0 +1,137 @@
+---
+sidebar_position: 1
+---
+
+# `createServerAction`
+
+The `createServerAction` function is returned by [`createClient`](/API/create-client.mdx) and is used to define individual server actions in your application.
+
+Each server action:
+
+- Validates the input using a **Zod schema**
+- Automatically applies shared **middleware**, **context**, and **error handling** defined in `createClient`
+- Returns a structured `Response` object compatible with `useActionState` on the client
+
+---
+
+## Basic Usage
+
+```tsx title="app/_lib/actions/sign-in.ts"
+"use server";
+
+import { z } from "zod";
+import { createServerAction } from "../utils/server-actions";
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export const signIn = createServerAction<typeof schema>(
+  schema,
+  async (values) => {
+    // Your server-side logic here
+    return { ok: true };
+  }
+);
+```
+
+---
+
+## Function Signature
+
+```ts
+function createServerAction<S extends ZodSchema, R = undefined>(
+  schema: S,
+  handler: (values: z.infer<S>, context: C) => Promise<Response<S, R>>
+): (
+  prev: Response<S, R>,
+  data: FormData
+) => Promise<Response<S, R>>;
+```
+
+### Parameters
+
+- **`schema`**: A [Zod](https://zod.dev) schema used to validate the incoming form data.
+- **`handler`**: A function that receives the validated values and the context (if defined). It must return a `Response` object.
+
+---
+
+## Return Type
+
+Every server action must return a `Response` object.
+
+```ts
+export type ErrorResponse<S extends ZodSchema> = {
+  ok: false;
+  message?: string;
+  errors?: { [K in keyof z.infer<S>]?: string[] };
+  values?: Partial<z.infer<S>>;
+};
+
+export type SuccessResponse<R> = {
+  ok: true;
+} & (R extends undefined ? {} : { response: R });
+
+export type Response<S extends ZodSchema, R = undefined> =
+  | ErrorResponse<S>
+  | SuccessResponse<R>;
+```
+
+### Behavior
+
+- If `ok: true`, you can optionally return a typed `response` object.
+- If `ok: false`, you can return:
+  - a general `message` for form-level errors
+  - `errors` for field-level validation
+  - the `values` that were submitted (e.g., to re-populate a form)
+
+---
+
+## Examples
+
+### Custom Response
+
+Return a structured object when the action succeeds:
+
+```tsx
+export const signIn = createServerAction<typeof schema, { url: string }>(
+  schema,
+  async (values) => {
+    return { ok: true, response: { url: "https://example.com/dashboard" } };
+  },
+);
+```
+
+The `response` property will be strongly typed as `{ url: string }`.
+
+---
+
+### Empty Response
+
+If you don’t need to return additional data, just return `ok: true`:
+
+```tsx
+export const signIn = createServerAction<typeof schema>(
+  schema,
+  async (values) => {
+    return { ok: true };
+  },
+);
+```
+
+---
+
+### Form-Level Error
+
+Return a `message` string to display a general form error in the UI:
+
+```tsx
+export const signIn = createServerAction<typeof schema>(
+  schema,
+  async (values) => {
+    return { ok: false, message: "Invalid credentials" };
+  },
+);
+```
+

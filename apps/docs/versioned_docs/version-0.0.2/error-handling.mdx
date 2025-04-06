@@ -1,0 +1,159 @@
+---
+sidebar_position: 3
+---
+
+# Error Handling
+
+`next-server-actions` provides a structured and consistent way to handle both **field-level** and **form-level** errors in your server actions. It also supports logging through a customizable error handler.
+
+---
+
+## Field Errors
+
+When a form is submitted, all input fields are automatically validated against your defined **Zod schema** on the server. If validation fails, `next-server-actions` returns a structured `errors` object containing messages for each invalid field.
+
+You can access these errors through the `state` returned by `useActionState`.
+
+```tsx title="app/_components/sign-in.form.tsx"
+"use client";
+
+import Form from "next/form";
+import { useActionState } from "react";
+import { signIn } from "../_lib/actions/sign-in";
+
+export function SignInForm() {
+  const [state, action, pending] = useActionState(signIn, {
+    ok: false,
+  });
+
+  return (
+    <Form action={action}>
+      <label htmlFor="email">Email</label>
+      <input type="email" id="email" name="email" required />
+      // highlight-start
+      {state.errors?.email?.map((error) => (
+        <p key={error} style={{ color: "red" }}>{error}</p>
+      ))}
+      // highlight-end
+
+      <br />
+
+      <label htmlFor="password">Password</label>
+      <input type="password" id="password" name="password" required />
+      // highlight-start
+      {state.errors?.password?.map((error) => (
+        <p key={error} style={{ color: "red" }}>{error}</p>
+      ))}
+      // highlight-end
+
+      <hr />
+
+      <button type="submit" disabled={pending}>
+        {pending ? "Submitting..." : "Submit"}
+      </button>
+    </Form>
+  );
+}
+```
+
+:::tip
+For larger forms, consider creating a reusable `<FormField>` component to display errors and handle label/input logic.
+Check out [Integrate with Shadcn/UI](/UI/shadcn.mdx) for an example.
+:::
+
+---
+
+## Form-Level Errors
+
+If an error occurs that applies to the entire form (e.g. authentication failure), you can return a `message` from your action:
+
+```tsx title="app/_lib/actions/sign-in.ts"
+"use server";
+
+import { createServerAction } from "../utils/server-actions";
+import { z } from "zod";
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export const signIn = createServerAction<typeof schema>(
+  schema,
+  async (values) => {
+    // highlight-start
+    const isAuthenticated = false;
+
+    if (!isAuthenticated) {
+      return { ok: false, message: "Unauthorized access" };
+    }
+    // highlight-end
+
+    return { ok: true };
+  },
+);
+```
+
+You can then display this message in your form:
+
+```tsx title="app/_components/sign-in.form.tsx"
+"use client";
+
+import Form from "next/form";
+import { useActionState } from "react";
+import { signIn } from "../_lib/actions/sign-in";
+
+export function SignInForm() {
+  const [state, action, pending] = useActionState(signIn, {
+    ok: false,
+  });
+
+  return (
+    <Form action={action}>
+      // highlight-start
+      {!state.ok && state.message && (
+        <p style={{ color: "red" }}>{state.message}</p>
+      )}
+      // highlight-end
+
+      <label htmlFor="email">Email</label>
+      <input type="email" id="email" name="email" />
+
+      <br />
+
+      <label htmlFor="password">Password</label>
+      <input type="password" id="password" name="password" />
+
+      <hr />
+
+      <button type="submit">Submit</button>
+    </Form>
+  );
+}
+```
+
+---
+
+## Error Logging
+
+To monitor or debug your server actions, you can pass a custom logger using the `onError` option in `createServerAction`. This logger will be triggered whenever an exception is thrown during execution.
+
+Example with [Sentry](https://sentry.io):
+
+```tsx title="app/_lib/utils/server-actions.ts"
+import { createClient } from "next-server-actions";
+import * as Sentry from "@sentry/nextjs";
+
+export const createServerAction = createClient({
+  // highlight-start
+  onError: async (error) => {
+    Sentry.captureException(error);
+  },
+  // highlight-end
+});
+```
+
+This makes it easy to integrate with services like Sentry, LogRocket, or even a simple `console.error` during development.
+
+---
+

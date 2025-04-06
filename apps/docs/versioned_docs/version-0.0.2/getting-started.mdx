@@ -1,0 +1,136 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting Started
+
+**`next-server-actions`** is a utility package for Next.js designed to simplify and enhance your experience working with server actions. It provides a collection of tools that help you build cleaner, more maintainable applications by extending the native Next.js and React APIs.
+
+:::caution
+`next-server-actions` requires **Next.js 15 or higher** with the **App Router**.
+:::
+
+---
+
+## 📦 Installation
+
+<Tabs groupId="package-manager" defaultValue="npm">
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npm install next-server-actions zod
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn add next-server-actions zod
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm install next-server-actions zod
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## 📁 Project Structure
+
+A typical file structure using `next-server-actions`:
+
+```bash
+my-app
+├── app
+│   ├── _components
+│   │   └── sign-in.form.tsx        # The form component
+│   ├── _lib
+│   │   └── actions
+│   │       └── sign-in.ts          # Server action logic
+│   │   └── utils
+│   │       └── server-actions.ts   # Utility to create server actions
+│   ├── layout.tsx
+│   └── page.tsx
+├── next.config.ts
+├── package.json
+...
+```
+
+---
+
+## 🧪 Basic Usage
+
+### 1. Create a reusable server action client
+
+This creates a `createServerAction()` function that can be reused for all your form actions.
+
+```tsx title="app/_lib/utils/server-actions.ts"
+import { createClient } from "next-server-actions";
+
+export const createServerAction = createClient({
+  // Optional: add middleware here (e.g. auth, logging, etc.)
+});
+```
+
+---
+
+### 2. Define a Zod schema and server action
+
+This validates the form on the server using the schema before executing any logic.
+
+```tsx title="app/_lib/actions/sign-in.ts"
+"use server";
+
+import { createServerAction } from "../utils/server-actions";
+import { z } from "zod";
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export const signIn = createServerAction(schema, async (values) => {
+  // Your login logic here
+  return { ok: true };
+});
+```
+
+---
+
+### 3. Create a form component using `useActionState`
+
+This uses `useActionState` to bind your form to the server action.
+
+```tsx title="app/_components/sign-in.form.tsx"
+"use client";
+
+import Form from "next/form";
+import { useActionState } from "react";
+import { signIn } from "../_lib/actions/sign-in";
+
+export function SignInForm() {
+  const [state, action, pending] = useActionState(signIn, {
+    ok: false,
+  });
+
+  return (
+    <Form action={action}>
+      <label htmlFor="email">Email</label>
+      <input type="email" id="email" name="email" required />
+
+      <br />
+
+      <label htmlFor="password">Password</label>
+      <input type="password" id="password" name="password" required />
+
+      <hr />
+
+      <button type="submit" disabled={pending}>
+        {pending ? "Submitting..." : "Submit"}
+      </button>
+    </Form>
+  );
+}
+```
