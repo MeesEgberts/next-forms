@@ -217,7 +217,6 @@ const schema = z.object({
 
 export const signIn = createServerAction<typeof schema>(
   schema,
-  // highlight-next-line
   async (values, { user }) => {
     // Your login logic using the context-provided user
     return { ok: true };
