@@ -35,7 +35,7 @@ export function FormControl(props: ComponentProps<typeof Slot>) {
 
   const hasError = errors.length > 0;
 
-  const messages = errors.map((error, index) => `form-message-${id}-${index}`);
+  const messages = errors.map((_, index) => `form-message-${id}-${index}`);
 
   return (
     <Slot

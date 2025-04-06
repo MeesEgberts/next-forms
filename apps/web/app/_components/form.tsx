@@ -10,12 +10,17 @@ import {
   FormMessage,
 } from "@web/app/_components/form-field";
 import { Input } from "@web/components/ui/input";
+import { FormData } from "@web/app/_lib/definitions/sign-in";
 import { Button } from "@web/components/ui/button";
-
-type Schema = {
-  email: string;
-  password: string;
-};
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@web/components/ui/select";
 
 export function SignInForm() {
   const [state, action, pending] = useActionState(signIn, {
@@ -24,8 +29,7 @@ export function SignInForm() {
 
   return (
     <Form action={action} className="grid gap-4 mx-auto max-w-2xl py-12">
-      {!state.ok && state.message && <p>{state.message}</p>}
-      <FormField<Schema> name="email" errors={state.errors}>
+      <FormField<FormData> name="email" errors={state.errors}>
         <FormLabel>Email</FormLabel>
         <FormControl>
           <Input name="email" type="email" />
@@ -33,17 +37,31 @@ export function SignInForm() {
         <FormMessage />
       </FormField>
 
-      <FormField<Schema> name="password" errors={state.errors}>
+      <FormField<FormData> name="password" errors={state.errors}>
         <FormLabel>Password</FormLabel>
         <FormControl>
-          <Input name="password" type="password" />
+          <Select name="fruit">
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Fruits</SelectLabel>
+                <SelectItem value="apple">Apple</SelectItem>
+                <SelectItem value="banana">Banana</SelectItem>
+                <SelectItem value="blueberry">Blueberry</SelectItem>
+                <SelectItem value="grapes">Grapes</SelectItem>
+                <SelectItem value="pineapple">Pineapple</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>{" "}
         </FormControl>
         <FormMessage />
       </FormField>
 
       <hr />
 
-      <Button type="submit">Submit</Button>
+      <Button>Submit</Button>
     </Form>
   );
 }

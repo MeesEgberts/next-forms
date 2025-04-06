@@ -1,0 +1,33 @@
+---
+sidebar_position: 1
+---
+
+# Submit Button
+
+Because `next-server-actions` is built on top of [`next/form`](https://nextjs.org/docs/app/api-reference/components/form), you can leverage the native `useFormStatus` hook from `react-dom` to track the submission state of a form.
+
+This is especially useful for disabling the submit button while the form is being processed and showing a loading indicator.
+
+---
+
+## Example
+
+```tsx title="app/_components/submit-button.tsx"
+"use client";
+
+import { useFormStatus } from "react-dom";
+
+export function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button type="submit" disabled={pending}>
+      {pending ? "Submitting..." : "Submit"}
+    </button>
+  );
+}
+```
+
+:::warning
+ The `useFormStatus` hook must be used inside a component that's a child of the `<Form>` component from `next/form`.
+:::
