@@ -35,8 +35,8 @@ export default function Home(): ReactNode {
 
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
+      title=""
+      description="Type-safe form handling for Next.js — effortless server action validation with Zod, built-in middleware, and great developer ergonomics."
     >
       <HomepageHeader />
       <main>

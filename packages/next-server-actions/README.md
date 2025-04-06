@@ -1,6 +1,6 @@
 # next-server-actions 📝
 
-**Simple, declarative form handling for Next.js Server Actions**
+**Type-safe form handling for Next.js — effortless server action validation with Zod, built-in middleware, and great developer ergonomics.**
 
 `next-server-actions` is a lightweight utility designed to make working with [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions) easier and more enjoyable. It provides a clean API for managing form submissions, validation, middleware, and error handling — all with minimal boilerplate.
 

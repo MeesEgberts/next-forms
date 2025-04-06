@@ -76,7 +76,7 @@ const config: Config = {
           position: "left",
           label: "Docs",
         },
-        { to: "/blog", label: "Blog", position: "left" },
+        // { to: "/blog", label: "Blog", position: "left" },
         {
           type: "docsVersionDropdown",
           position: "right",
@@ -112,10 +112,10 @@ const config: Config = {
         {
           title: "More",
           items: [
-            {
+            /* {
               label: "Blog",
               to: "/blog",
-            },
+            },*/
             {
               label: "GitHub",
               href: "https://github.com/MeesEgberts/next-server-actions",
