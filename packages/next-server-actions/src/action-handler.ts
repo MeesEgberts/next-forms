@@ -6,7 +6,7 @@ export function createClient<C extends object = {}>({
   context,
   onError,
 }: CreateClientOptions<C>) {
-  return function createServerAction<S extends ZodSchema, R = undefined>(
+  return function createServerAction<S extends ZodSchema, R = object>(
     schema: S,
     handler: (values: z.infer<S>, context: C) => Promise<Response<S, R>>,
   ) {

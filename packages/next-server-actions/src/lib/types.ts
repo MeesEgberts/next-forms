@@ -1,20 +1,13 @@
 import { z, ZodSchema } from "zod";
 
 // RESPONSE
-export type ErrorResponse<S extends ZodSchema> = {
-  ok: false;
+export type Response<S extends ZodSchema, R = object> = {
+  ok: boolean;
   message?: string;
   errors?: { [K in keyof z.infer<S>]?: string[] };
   values?: Partial<z.infer<S>>;
+  response?: R;
 };
-
-export type SuccessResponse<R> = {
-  ok: true;
-} & (R extends undefined ? {} : { response: R });
-
-export type Response<S extends ZodSchema, R = undefined> =
-  | ErrorResponse<S>
-  | SuccessResponse<R>;
 
 // MIDDLEWARE
 export type MiddlewareResponse = {

@@ -11,7 +11,6 @@ const schema = z.object({
 export const signIn = createServerAction<typeof schema>(
   schema,
   async (values) => {
-    // return a message that can display in the UI
-    return { ok: false, message: "error message" };
+    return { ok: false };
   },
 );
