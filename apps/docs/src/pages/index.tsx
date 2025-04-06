@@ -36,7 +36,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title=""
-      description="Type-safe form handling for Next.js — effortless server action validation with Zod, built-in middleware, and great developer ergonomics."
+      description="Type-safe server action handling for Next.js — effortless server action validation with Zod, built-in middleware, and great developer ergonomics."
     >
       <HomepageHeader />
       <main>

@@ -7,7 +7,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 const config: Config = {
   title: "next-server-actions",
   tagline:
-    "A fully native and type-safe way to handle forms in Next.js using Zod schema validation.",
+    "Type-safe server action handling for Next.js — effortless server action validation with Zod, built-in middleware, and great developer ergonomics.",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
