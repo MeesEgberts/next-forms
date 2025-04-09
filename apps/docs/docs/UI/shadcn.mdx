@@ -101,6 +101,7 @@ export function FormControl(props: ComponentProps<typeof Slot>) {
 
   return (
     <Slot
+      id={id}
       aria-invalid={hasError}
       aria-describedby={`form-description-${id} ${messages.join(" ")}`}
       {...props}
