@@ -1,0 +1,274 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# shadcn/ui Integration
+
+`next-server-actions` works seamlessly with [shadcn/ui](https://ui.shadcn.com/) components. This guide shows how to integrate your server actions with reusable form components using `shadcn/ui`.
+
+---
+
+## Getting Started
+
+### Installation
+
+To use `Slot` in custom form components, install the `@radix-ui/react-slot` package:
+
+<Tabs groupId="package-manager" defaultValue="npm">
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npm install @radix-ui/react-slot
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn add @radix-ui/react-slot
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm install @radix-ui/react-slot
+    ```
+  </TabItem>
+</Tabs>
+
+You’ll also need the [`Label`](https://ui.shadcn.com/docs/components/label) component from `shadcn/ui`. Install it using:
+
+<Tabs groupId="package-manager" defaultValue="npm">
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx shadcn@latest add label
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    npx shadcn@latest add label
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest add label
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Create Shared Form Components
+
+Create a file called `form-fields.tsx` in your `app/components` directory. This file defines reusable components for form layout, validation messages, and accessibility attributes.
+
+```tsx
+"use client";
+
+import { ComponentProps, createContext, useContext, useId } from "react";
+import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
+import { Slot } from "@radix-ui/react-slot";
+
+type Context = { id: string; name: string; errors: string[] };
+const FormFieldContext = createContext<Context>({} as Context);
+
+interface FormFieldProps<S extends object> extends ComponentProps<"div"> {
+  name: keyof S;
+  errors?: { [K in keyof S]?: string[] };
+}
+
+export function FormField<S extends object>({
+  className,
+  name,
+  errors,
+  ...props
+}: FormFieldProps<S>) {
+  const id = useId();
+  const fieldErrors = errors ? errors[name] ?? [] : [];
+
+  return (
+    <FormFieldContext.Provider value={{ id, name: name as string, errors: fieldErrors }}>
+      <div className={cn("space-y-2", className)} {...props} />
+    </FormFieldContext.Provider>
+  );
+}
+
+export function FormControl(props: ComponentProps<typeof Slot>) {
+  const { id, errors } = useContext(FormFieldContext);
+  const hasError = errors.length > 0;
+
+  const messages = errors.map((_, index) => `form-message-${id}-${index}`);
+
+  return (
+    <Slot
+      id={id}
+      aria-invalid={hasError}
+      aria-describedby={`form-description-${id} ${messages.join(" ")}`}
+      {...props}
+    />
+  );
+}
+
+export function FormLabel({
+  className,
+  ...props
+}: ComponentProps<typeof Label>) {
+  const { id, errors } = useContext(FormFieldContext);
+
+  return (
+    <Label
+      htmlFor={id}
+      className={cn(className, errors.length > 0 && "text-destructive")}
+      {...props}
+    />
+  );
+}
+
+export function FormMessage() {
+  const { id, errors } = useContext(FormFieldContext);
+
+  return errors.map((error, index) => (
+    <p
+      key={error}
+      id={`form-message-${id}-${index}`}
+      className="text-[0.8rem] font-medium text-destructive"
+    >
+      {error}
+    </p>
+  ));
+}
+
+export function FormDescription({ className, ...props }: ComponentProps<"p">) {
+  const { id } = useContext(FormFieldContext);
+
+  return (
+    <p
+      id={`form-description-${id}`}
+      className={cn("text-[0.8rem] text-muted-foreground", className)}
+      {...props}
+    />
+  );
+}
+```
+
+---
+
+## Example Usage
+
+Define a validation schema and form types:
+
+```ts
+import { z } from "zod";
+
+export const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export type FormData = z.infer<typeof schema>;
+```
+
+Now use the shared components to build a clean form:
+
+```tsx
+"use client";
+
+import Form from "next/form";
+import { useActionState } from "react";
+// the server action from previous example
+import { signIn } from "@lib/actions/sign-in";
+// import the components
+import {
+  FormField,
+  FormControl,
+  FormLabel,
+  FormMessage,
+} from "@/components/form-fields";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+// import the schema
+import { FormData } from "@/lib/definitions";
+
+export function SignInForm() {
+  const [state, action, pending] = useActionState(signIn, { ok: false });
+
+  return (
+    <Form action={action} className="grid gap-4 mx-auto max-w-2xl py-12">
+      <FormField<FormData> name="email" errors={state.errors}>
+        <FormLabel>Email</FormLabel>
+        <FormControl>
+          <Input name="email" type="email" />
+        </FormControl>
+        <FormMessage />
+      </FormField>
+
+      <FormField<FormData> name="password" errors={state.errors}>
+        <FormLabel>Password</FormLabel>
+        <FormControl>
+          <Input name="password" type="password" />
+        </FormControl>
+        <FormMessage />
+      </FormField>
+
+      <hr />
+
+      <Button disabled={pending}>
+        {pending ? "Submitting..." : "Submit"}
+      </Button>
+    </Form>
+  );
+}
+```
+
+---
+
+## Usage with `Select`
+
+You can also use `FormField` with the `Select` component from `shadcn/ui`.
+
+```tsx
+"use client";
+
+import {
+  FormField,
+  FormControl,
+  FormLabel,
+  FormMessage,
+} from "@/components/form-fields";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+<FormField<FormData> name="fruit" errors={state.errors}>
+  <FormLabel>Fruit</FormLabel>
+  <FormControl>
+    {/* highlight-next-line */}
+    <Select name="fruit">
+      <SelectTrigger>
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="blueberry">Blueberry</SelectItem>
+          <SelectItem value="grapes">Grapes</SelectItem>
+          <SelectItem value="pineapple">Pineapple</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  </FormControl>
+  <FormMessage />
+</FormField>
+```
+
+:::warning
+Always pass the `name` prop to inputs like `Input`, `Textarea`, or `Select`. This is required for the form data to be submitted properly.
+:::

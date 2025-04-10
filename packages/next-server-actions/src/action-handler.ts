@@ -1,5 +1,9 @@
 import { z, ZodSchema } from "zod";
-import { CreateClientOptions, Response } from "./lib/types.js";
+import {
+  CreateClientOptions,
+  CreateServerActionOptions,
+  Response,
+} from "./lib/types.js";
 
 export function createClient<C extends object = {}>({
   middleware,
@@ -9,7 +13,10 @@ export function createClient<C extends object = {}>({
   return function createServerAction<S extends ZodSchema, R = object>(
     schema: S,
     handler: (values: z.infer<S>, context: C) => Promise<Response<S, R>>,
+    options?: CreateServerActionOptions,
   ) {
+    const clear = options?.clear ?? true;
+
     return async function serverAction(
       prev: Response<S, R>,
       data: FormData,
@@ -21,6 +28,7 @@ export function createClient<C extends object = {}>({
           return {
             ok: false,
             message: m.message,
+            values: clear ? {} : prev.values,
           };
         }
       }
@@ -33,6 +41,7 @@ export function createClient<C extends object = {}>({
         return {
           ok: false,
           errors: parsed.error.flatten().fieldErrors,
+          values: clear ? {} : prev.values,
         };
       }
 
@@ -43,7 +52,7 @@ export function createClient<C extends object = {}>({
           return handler(parsed.data, c).catch((e) => {
             if (onError) onError(e);
 
-            return { ok: false };
+            return { ok: false, values: clear ? {} : parsed.data };
           });
         }
       }
@@ -51,7 +60,7 @@ export function createClient<C extends object = {}>({
       return handler(parsed.data, {} as C).catch((e) => {
         if (onError) onError(e);
 
-        return { ok: false };
+        return { ok: false, values: clear ? {} : parsed.data };
       });
     };
   };

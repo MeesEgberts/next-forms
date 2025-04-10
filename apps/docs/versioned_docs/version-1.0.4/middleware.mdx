@@ -1,0 +1,76 @@
+---
+sidebar_position: 5
+---
+
+# Middleware
+
+Middleware allows you to intercept and validate requests **before** they reach your server action logic. This is useful for enforcing authentication, role-based access control, or other custom request checks.
+
+---
+
+## Adding Middleware
+
+You can define middleware by using the `middleware` option when creating your server action client. This function runs before your server action executes and can return a response to short-circuit the action—for example, if a user is not authenticated.
+
+```tsx title="app/_lib/utils/server-actions.ts"
+import { createClient } from "next-server-actions";
+import { getUser } from "../../_data/get-user";
+
+export const createServerAction = createClient({
+  // highlight-start
+  middleware: async () => {
+    const user = await getUser();
+
+    if (!user) {
+      return { message: "Unauthorized" };
+    }
+  },
+  // highlight-end
+});
+```
+
+If the middleware returns an object, the corresponding action will **not** run. Instead, that object will be returned as the response to the client.
+
+---
+
+## Handling Middleware Responses in the UI
+
+The returned `message` (or other fields) can be accessed via the `state` from `useActionState`—just like a regular action response.
+
+```tsx title="app/_components/sign-in.form.tsx"
+"use client";
+
+import Form from "next/form";
+import { useActionState } from "react";
+import { signIn } from "../_lib/actions/sign-in";
+
+export function SignInForm() {
+  const [state, action, pending] = useActionState(signIn, {
+    ok: false,
+  });
+
+  return (
+    <Form action={action}>
+      {/* Form-level error from middleware */}
+      // highlight-next-line
+      {!state.ok && state.message && <p>{state.message}</p>}
+
+      <label htmlFor="email">Email</label>
+      <input type="email" id="email" name="email" />
+
+      <br />
+
+      <label htmlFor="password">Password</label>
+      <input type="password" id="password" name="password" />
+
+      <hr />
+
+      <button type="submit">Submit</button>
+    </Form>
+  );
+}
+```
+
+---
+
+Middleware is ideal for preventing unnecessary database calls or sensitive logic execution when access requirements aren’t met.
